@@ -1,0 +1,47 @@
+= ANOMALY DETECTION
+Procedure for anomaly detection with quantitative and qualitative predictors
+
+== FRAMEWORK
+
+The procedure follows the general framework mentioned in link:https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3946903/[ANALYSIS OF SAMPLING TECHNIQUES FOR IMBALANCED DATA: AN N=648 ADNI STUDY]
+
+- Find a robust statistical model
+
+- Find a robust estimator
+
+- Resample the models
+
+Note: all scripts assume the data have a definite type corresponding to their nature
+
+===== The final model will be one of the subset in the following combinatorial set
+
+- Set of feature selection algorithms:
+
+    FS = {Pairwise Wilcon Test, Kruskal Test, Chi-Square Test, Two way Anova (III), Relief-F, Gini Index, Information Gain, SLR+SS}
+
+- Set of class-imbalance handling approaches:
+
+    CIS = {Different types and rates of data re-sampling techniques}
+
+- Set of classification algorithms:
+
+    MS = {Random Forest, Support Vector Machine}
+
+==== An ensemble system is defined as follows:
+
+E= {f, c, m}, where f ∈ FS,  c∈ CIS, and m ∈ MS
+
+
+
+=== STATISTICAL MODEL
+This step searches for a valid statistical model.
+As there is no initial assumption on how the data are distributed, parametric and non parametric tests are performed.
+The only goal at this step is to find some sets of variables relevant for testing estimators.
+The general hypothesis for retaining a variable is that this variable should allow to discriminate between the normal event group and the exceptional event group.
+
+
+==== VARIABLE SELECTION
+
+__features.py__
+
+
