@@ -11,9 +11,9 @@ The procedure follows the general framework mentioned in link:https://www.ncbi.n
 
 - Resample the models
 
-Note: all scripts assume the data have a definite type corresponding to their nature
+Note: all scripts assume the data have a definite type
 
-===== The final model will be one of the subset in the following combinatorial set
+===== The final model will be one of the subset in the following combinatorics
 
 - Set of feature selection algorithms:
 
@@ -29,29 +29,37 @@ Note: all scripts assume the data have a definite type corresponding to their na
 
 ==== An ensemble system is defined as follows:
 
-E= {f, c, m}, where f ∈ FS,  c∈ CIS, and m ∈ MS
+E= {f, c, m}, where f ∈ FS,  c ∈ CIS, and m ∈ MS
 
 
+[filetree]
+* FS: features_selection/
+** features/
+** outliers/
+* MS: estimation/
+** baseline/
+** ensemble/
+** gridsearch/
+* CIS: resampling/
+*** sample/
 
-=== STATISTICAL MODEL
-This step searches for a valid statistical model.
-As there is no initial assumption on how the data are distributed, parametric and non parametric tests are performed.
-The only goal at this step is to find some sets of variables relevant for testing estimators.
-The general hypothesis for retaining a variable is that this variable should allow to discriminate between the normal event group and the exceptional event group.
 
 
 ==== FEATURES SELECTION
 
-__features.py__
+* Functions for statistical modeling and reduction
 
-__outliers.py__
-
-==== ESTIMATION
-
-__bully.py__
+This step searches for a valid statistical model. The general hypothesis for retaining a variable is that this variable should allow to discriminate between the normal event group and the exceptional event group.
+As there is no initial assumption on how the data are distributed, parametric and non parametric tests are performed.
+Different variables can be retained for different models depending on the results of the tests
+i.e. Anova valid variables will be privileged for Logistic Regression, Chi Square valid variables will be privileged for Random Forest.
 
 ==== RESMAPLING
+* Tests for different resampling methods, regarding the selected variables
 
-__resampler.py__
 
+==== MODEL SELECTION
+* Tests for different classifiers
 
+The baseline is a xgboost model.
+Ensemble learning and specific classifiers are tested
