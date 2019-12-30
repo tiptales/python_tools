@@ -68,7 +68,7 @@ def trainit(tmp, y, idx, k, scale=None, nan=None):
     #                                                                           #
     #############################################################################
 
-    tmp['CONVERSATION_QUALITY'] = tmp['CONVERSATION_QUALITY'].astype(object)
+    tmp[str(y)] = tmp[str(y)].astype(object)
     objectlist = tmp.select_dtypes(include=['object']).columns.to_list()
     floatlist = tmp.select_dtypes(exclude=['object']).columns.to_list()
 
