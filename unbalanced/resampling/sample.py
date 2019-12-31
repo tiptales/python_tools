@@ -49,42 +49,6 @@ def under(df, sampling, y, maj_, min_):
     return (under_data)
 
 
-def stdandscale(tmp, y):
-
-    floatlist = tmp.select_dtypes(exclude=['object']).columns.to_list()
-    stdscaler = StandardScaler()
-    tmp[floatlist] = stdscaler.fit_transform(tmp[floatlist])
-
-    objectlist = tmp.select_dtypes(include=['object']).columns.to_list()
-    if not str(y) in objectlist:
-        objectlist = objectlist + [str(y)]
-    for name in objectlist:
-        col = pd.Categorical(tmp[name])
-        tmp[name] = col.codes
-
-    return tmp
-
-
-def processing(df, y):
-    """
-    :param x: dataframe with predictors and value of interest
-    """
-    tmp_ = deepcopy(df)
-    tmp = stdandscale(tmp_, y)
-    X_train, X_test, y_train, y_test = train_test_split(
-        tmp.drop(str(y), 1),
-        tmp[str(y)],
-        test_size=0.2,
-        random_state=42,
-        shuffle=True,
-        stratify=tmp[y]
-    )
-    print("length of training data is : ", len(X_train))
-    print("length of test data is : ", len(X_test))
-    print('y_train dtype is ', y_train.dtype, 'y_test dtype is : ', y_test.dtype)
-    return(X_train, X_test, y_train, y_test)
-
-
 def model(model, Xtrain, Xtest, ytrain, ytest):
     """
     :param model: estimator
@@ -145,7 +109,7 @@ if __name__ == '__main__':
         #model(clf, under_Xtrain, under_Xtest, under_ytrain, under_ytest)
         print("________________________________________________________________________________________________________")
         # print('____________________________________results on test data________________________________________________')
-        data_Xtrain, data_Xtest, data_ytrain, data_ytest = processing(dataf, Y)
+        data_Xtrain, data_Xtest, data_ytrain, data_ytest = u.processit(dataf, Y)
         model(clf, under_Xtrain, data_Xtest, under_ytrain, data_ytest)
 
 
