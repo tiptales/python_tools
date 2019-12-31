@@ -11,9 +11,9 @@ The procedure follows the general framework mentioned in link:https://www.ncbi.n
 
 - Resample the models
 
-Note: all scripts assume the data have a definite type corresponding to their nature
+Note: all scripts assume the data have a definite type
 
-===== The final model will be one of the subset in the following combinatorial set
+===== The final model will be one of the subset in the following combinatorics
 
 - Set of feature selection algorithms:
 
@@ -29,29 +29,56 @@ Note: all scripts assume the data have a definite type corresponding to their na
 
 ==== An ensemble system is defined as follows:
 
-E= {f, c, m}, where f ∈ FS,  c∈ CIS, and m ∈ MS
+E= {f, c, m}, where f ∈ FS,  c ∈ CIS, and m ∈ MS
+
+
+[filetree]
+* FS: features_engineering/
+** covariates/
+** outliers/
+* MS: estimation/
+** baseline/
+** models/
+** gridsearchORspecifics[TODO]/
+* CIS: resampling/
+*** sample/
 
 
 
-=== STATISTICAL MODEL
-This step searches for a valid statistical model.
+==== FEATURES ENGINEERING
+
+* Functions for statistical modeling and reduction
+
+This step searches for a valid statistical model. The general hypothesis for retaining a variable is that this variable should allow to discriminate between the normal event group and the exceptional event group.
 As there is no initial assumption on how the data are distributed, parametric and non parametric tests are performed.
-The only goal at this step is to find some sets of variables relevant for testing estimators.
-The general hypothesis for retaining a variable is that this variable should allow to discriminate between the normal event group and the exceptional event group.
+Different variables can be retained for different models depending on the results of the tests
+i.e. Anova valid variables will be privileged for Logistic Regression, Chi Square valid variables will be privileged for Random Forest.
+
+==== RESAMPLING
+* Tests for different resampling methods, regarding the selected variables
 
 
-==== FEATURES SELECTION
+==== MODEL SELECTION
+* Tests for different classifiers
 
-__features.py__
+- The baseline is a xgboost model. It is used to evaluate the performance augmentation of different features selections methods (different sets of variables) from previous step.
+- The models are an ensemble of simple classifiers evaluating parametric and non parametric models.
 
-__outliers.py__
+== Examples
 
-==== ESTIMATION
+- Covariate analysis report
 
-__bully.py__
+    python features_engineering/covariates.py --infile data/bank/ba
+nk.csv --Y y --method pearson --Y2 job --dim 4
 
-==== RESMAPLING
 
-__resampler.py__
+- Test Classifiers
+
+    python estimation/models.py --infile data/bank/bank.csv --Y y
+
+- Resampling test
+
+    python resampling/sample.py --infile data/bank/bank.csv --Y y -
+-majority no --minority yes
 
 

@@ -11,7 +11,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.feature_selection import SelectKBest, chi2
 import xgboost as xgb
 from sklearn.model_selection import KFold, GridSearchCV
-from sklearn.metrics import accuracy_score, make_scorer, confusion_matrix, f1_score
+from sklearn.metrics import make_scorer, confusion_matrix, f1_score
 from sklearn.metrics import plot_precision_recall_curve
 from sklearn.metrics import average_precision_score
 

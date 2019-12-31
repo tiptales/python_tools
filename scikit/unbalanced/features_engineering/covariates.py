@@ -4,14 +4,14 @@ import numpy as np
 from itertools import chain, combinations
 from collections import defaultdict
 import pingouin as pg
+from sklearn.decomposition import PCA
+import argparse
 
 ##########################################################################
 #                                                                        #
-#                          STATISTICAL TESTS                             #
+#                          NON PARAMETRIC TESTS                          #
 #                                                                        #
 ##########################################################################
-
-
 
 ##########################################################################
 #                                                                        #
@@ -65,7 +65,7 @@ def pairwisetest(df, y):
 def chi2(df):
     """
     :param df:
-    :return:
+    :return: Table of chi square test for each combination of quantitative variables
     """
     chidict = defaultdict(list)
     objectlist = df.select_dtypes(include=['object']).columns.tolist()
@@ -95,11 +95,21 @@ def chi2(df):
 
 ##########################################################################
 #                                                                        #
-#                          Correlation Tests                             #
+#                            PARAMETRIC TESTS                            #
+#                                                                        #
+##########################################################################
+##########################################################################
+#                                                                        #
+#                          Correlation Coefficients                      #
 #                                                                        #
 ##########################################################################
 
 def corrcoef(df, method):
+    """
+    :param df: dataframe
+    :param method: a method from the pandas.corr() methods
+    :return: table of sorted correlation coefficients for quantitative variables
+    """
 
     numlist = df.select_dtypes(exclude=['object']).columns.tolist()
     cormat = df[numlist].corr(method= method).abs()
@@ -109,12 +119,20 @@ def corrcoef(df, method):
     return sortedcoef
 
 
+##########################################################################
+#                                                                        #
+#                          ANOVA TEST                                    #
+#    All quantitative variables are tested against the binary response   #
+#                                                                        #
+##########################################################################
+
+
 def aovtables(df, y1, y2):
     """
     :param df: dataframe
     :param y1: factor 1
     :param y2: factor 2
-    :return:
+    :return: Anova tables (III) testing the influence of y1 and y2 factors on each quantitative variable
     """
     aovlist = []
     numlist = df.select_dtypes(exclude=['object']).columns.tolist()
@@ -123,19 +141,59 @@ def aovtables(df, y1, y2):
 
     return aovlist
 
+##########################################################################
+#                                                                        #
+#                          PCA TESTS                                     #
+#                                                                        #
+##########################################################################
+
+
+def XDPCA(df, n_components, svd_solver):
+    """
+    :param df: dataframe, only quantitative values are considered, are supposed scaled
+    :param n_components: int, nb of components
+    :param svd_solver: solver of scikit PCA
+    :return: PCA object
+    """
+
+    pca = PCA(n_components=n_components, svd_solver=svd_solver)
+    numlist = df.select_dtypes(exclude=['object']).columns.tolist()
+    pca_ = pca.fit(df[numlist])
+
+    maxcomp = [np.abs(pca_.components_[i]).argmax() for i in range(pca_.components_.shape[0])]
+    fnames = df[numlist].columns.tolist()
+    maxcomp_names = [fnames[maxcomp[i]] for i in range(pca_.components_.shape[0])]
+    dict_ = {'PC{}'.format(i + 1): maxcomp_names[i] for i in range(pca_.components_.shape[0])}
+    dfpca = pd.DataFrame(sorted(dict_.items()))
+    dfpca['Explained Variance'] = pca_.explained_variance_ratio_
+
+    return dfpca
+
 
 if __name__ == '__main__':
 
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--infile', type=str, help='input file path')
+    parser.add_argument('--sep', type=str, help='pandas sep if needed')
 
-    dataf = pd.DataFrame({'Q1': [1, 2, 3, 3, 2], 'Q2':[4, 5, 6, 3, 4], 'Q3': ['A', 'B', 'A', 'A', 'B'], 'Y': ["0", "0", "0", "0", "1"]})
+    parser.add_argument('--Y', type=str, help='value of interest')
+    parser.add_argument('--method', type=str, help='method for correlation coef computation')
+    parser.add_argument('--Y2', type=str, help='second factor for ANOVA tables')
+    parser.add_argument('--dim', type=int, help ='number of dimensions for PCA analysis')
+
+    args = parser.parse_args()
+    dataf = pd.read_csv(args.infile, sep=args.sep)
+    Y, method, Y2, dim = args.Y, args.method, args.Y2, args.dim
+
     print(dataf.dtypes)
     print('__________________________________________________________________________')
-    print(pairwisetest(dataf, 'Y'))
+    print(pairwisetest(dataf, Y))
     print('__________________________________________________________________________')
     print(chi2(dataf))
     print('__________________________________________________________________________')
-    print(corrcoef(dataf, method='spearman'))
+    print(corrcoef(dataf, method=method))
     print('__________________________________________________________________________')
-    [print(i, '\n') for i in aovtables(dataf, 'Q3', 'Y')]
-
+    [print(i, '\n') for i in aovtables(dataf, Y2, Y)]
+    print('__________________________________________________________________________')
+    print(XDPCA(dataf, dim, 'full'))
 
