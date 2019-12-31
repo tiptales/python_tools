@@ -1,0 +1,7 @@
+
+
+use scrap2.py to call the API
+
+use evaldata.py ti=o evaluate to consistency and merge 
+
+use clean.py to do a bit of cleaning on the tweets text

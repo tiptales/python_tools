@@ -1,0 +1,7 @@
+
+tweepy
+argparse
+pywsd
+pandas
+glob
+nltk
