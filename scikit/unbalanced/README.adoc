@@ -68,8 +68,7 @@ i.e. Anova valid variables will be privileged for Logistic Regression, Chi Squar
 
 - Covariate analysis report
 
-    python features_engineering/covariates.py --infile data/bank/ba
-nk.csv --Y y --method pearson --Y2 job --dim 4
+    python features_engineering/covariates.py --infile data/bank/bank.csv --Y y --method pearson --Y2 job --dim 4
 
 
 - Test Classifiers
@@ -78,7 +77,6 @@ nk.csv --Y y --method pearson --Y2 job --dim 4
 
 - Resampling test
 
-    python resampling/sample.py --infile data/bank/bank.csv --Y y -
--majority no --minority yes
+    python resampling/sample.py --infile data/bank/bank.csv --Y y --majority no --minority yes
 
 

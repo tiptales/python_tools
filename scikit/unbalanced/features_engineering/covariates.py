@@ -170,6 +170,8 @@ def XDPCA(df, n_components, svd_solver):
     return dfpca
 
 
+
+
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
@@ -185,7 +187,7 @@ if __name__ == '__main__':
     dataf = pd.read_csv(args.infile, sep=args.sep)
     Y, method, Y2, dim = args.Y, args.method, args.Y2, args.dim
 
-    print(dataf.dtypes)
+    print(dataf.describe().transpose)
     print('__________________________________________________________________________')
     print(pairwisetest(dataf, Y))
     print('__________________________________________________________________________')

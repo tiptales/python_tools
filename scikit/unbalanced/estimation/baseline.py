@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import itertools
 import os
+import argparse
 
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.model_selection import train_test_split
@@ -174,28 +175,40 @@ def trainit(tmp, y, idx, k, scale=None, nan=None):
     fig, ax = plt.subplots()
     plot_confusion_matrix(cm, classes=np.unique(tmp[str(y)]),
                           ax=ax, title='xgboost.' + str(idx))
-    plt.show()
-    plt.savefig(os.path.join(writepath_, ("xgbplot_" + str(idx)) + ".png"))
 
-    from sklearn.metrics import precision_recall_curve
+    plt.savefig(os.path.join(writepath_, ("xgbplot_" + str(idx)) + ".png"))
 
     average_precision = average_precision_score(y_test, predict)
     print('Average precision-recall score: {0:0.2f}'.format(average_precision))
     disp = plot_precision_recall_curve(model, X_test, y_test)
     disp.ax_.set_title('2-class Precision-Recall curve: '
                        'AP={0:0.2f}'.format(average_precision))
+    plt.show()
 
+
+if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--infile', type=str, help='input file path')
+    parser.add_argument('--Y', type=str, help='value of interest')
+    parser.add_argument('--sep', type=str, help='pandas sep if needed')
+    parser.add_argument('--index', type=int)
+    parser.add_argument('--k', type=int)
+    parser.add_argument('--scale', type=str)
+    parser.add_argument('--nan', type=str)
+
+    args = parser.parse_args()
+    dataf = pd.read_csv(args.infile, args.sep)
+    y, idx, k, scale, nan = args.Y, args.index, args.k, args.scale, args.nan
+    print(dataf.head())
+    trainit(dataf, y, idx, k, scale = scale, nan = nan)
+
+
+#TODO load
+########################################################################
 # load model from file
-# loaded_model = pickle.load(open("real_campain_2/models/xgboost1912_reduced_w_dummies.pickle.dat", "rb"))
-# data_list1 = pickle.load(open("real_campain_2/models/data_xgboost1912_reduced_w_dummies.pickle.dat", "rb"))
+# path= 'path'
+# loaded_model = pickle.load(open("path_", "rb"))
+# data_list1 = pickle.load(open("path_", "rb"))
 # prd = loaded_model.predict(data_list1[1])
 # print(confusion_matrix(data_list1[3],prd))
-
-# Best score - max AUC
-    # best_score = max(cv_results['auc-mean'])
-    #
-    # # Loss to be minimized
-    # loss = 1 - best_score
-    #
-    # # Dictionary with information for evaluation
-    # return {'loss': loss, 'params': params, 'status': STATUS_OK}
