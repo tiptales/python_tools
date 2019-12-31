@@ -70,6 +70,10 @@ i.e. Anova valid variables will be privileged for Logistic Regression, Chi Squar
 
     python features_engineering/covariates.py --infile data/bank/bank.csv --Y y --method pearson --Y2 job --dim 4
 
+- Make baseline
+
+    python estimation/baseline.py --infile data/bank/bank.csv --Y y --index 0 --k 10 --scale scaler --nan mean
+
 
 - Test Classifiers
 
