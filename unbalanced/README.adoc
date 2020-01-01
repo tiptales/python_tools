@@ -81,6 +81,7 @@ i.e. Anova valid variables will be privileged for Logistic Regression, Chi Squar
 
 - Resampling test
 
-    python resampling/sample.py --infile data/bank/bank.csv --Y y --majority no --minority yes
+    python resampling/sample.py --model rf --infile data/bank/bank.csv --Y y --majority no --minority yes
+
 
 

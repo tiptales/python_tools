@@ -8,6 +8,7 @@ import argparse
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import make_scorer, confusion_matrix, f1_score, recall_score, precision_recall_curve, auc,roc_curve, roc_auc_score,classification_report
 import warnings
 warnings.filterwarnings('ignore')
@@ -49,19 +50,19 @@ def under(df, sampling, y, maj_, min_):
     return (under_data)
 
 
-def model(model, Xtrain, Xtest, ytrain, ytest):
+def model(clf, Xtrain, Xtest, ytrain, ytest, modelname):
     """
     :param model: estimator
     """
-    clf = model
+    clf = clf
     clf.fit(Xtrain, ytrain)
     pred = clf.predict(Xtest)
     cm = confusion_matrix(ytest, pred)
     print('############################')
-    print("the recall for this model is :", cm[1, 1]/(cm[1, 1]+cm[1, 0]))
+    print("the recall for", modelname, ' is:', cm[1, 1]/(cm[1, 1]+cm[1, 0]))
     print('############################')
     fig, ax = plt.subplots()
-    u.plot_confusion_matrix(cm, classes=np.unique(ytrain), ax=ax, title='resampled logit.')
+    u.plot_confusion_matrix(cm, classes=np.unique(ytrain), ax=ax, title='resampled'+modelname)
     plt.show()
     #fig = plt.figure(figsize=(6,3))
     print("TP: ", cm[1, 1,], "exceptional events transaction predicted exception") #
@@ -83,6 +84,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--infile', type =str, help = 'input file path')
     parser.add_argument('--sep', type =str, help = 'pandas sep if needed')
+    parser.add_argument('--model', type=str, help = 'possibe models are: logit, rf')
 
     parser.add_argument('--Y', type = str, help='value of interest')
     parser.add_argument('--majority',help='majority class label in the dataset, will be turned to 0')
@@ -105,11 +107,13 @@ if __name__ == '__main__':
         under_Xtrain, under_Xtest, under_ytrain, under_ytest = u.processit(under_data, Y, scale= 'stdscaler', nan=None)
 
         print()
-        clf = LogisticRegression()
+        if args.model == 'logit':
+            clf = LogisticRegression()
+        elif args.model == 'rf':
+            clf = RandomForestClassifier()
         #model(clf, under_Xtrain, under_Xtest, under_ytrain, under_ytest)
         print("________________________________________________________________________________________________________")
-        # print('____________________________________results on test data________________________________________________')
         data_Xtrain, data_Xtest, data_ytrain, data_ytest = u.processit(dataf, Y)
-        model(clf, under_Xtrain, data_Xtest, under_ytrain, data_ytest)
+        model(clf, under_Xtrain, data_Xtest, under_ytrain, data_ytest, args.model)
 
 
